@@ -1,0 +1,7 @@
+# Ignorar archivos generados
+*.deb
+*.log
+*.tmp
+
+# Ignorar configuraciones locales
+settings.conf

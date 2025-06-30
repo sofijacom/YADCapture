@@ -1,0 +1,304 @@
+#!/bin/bash
+# =============================================================================
+# Script: YADCapture
+# autor: josejp2424
+# Descripción: Captura de pantalla o GIF con opciones configurables usando FFmpeg
+# Soporta múltiples idiomas detectando la configuración del sistema
+#version 0.2.1
+# licencia MIT
+# =============================================================================
+
+# Detectar idioma del sistema
+LANG_CODE=$(echo "$LANG" | cut -d '_' -f1 | tr '[:upper:]' '[:lower:]')
+LANG_CODE_FULL=$(echo "$LANG" | tr '[:upper:]' '[:lower:]')
+set_language_strings() {
+    case "$1" in
+        es)
+            mytitle="Captura de pantalla"
+            mytitle2="Retardo (segundos)"
+            mytitle3="Tipo de captura"
+            mytitle4="Modo de captura"
+            mytitle5="Pantalla completa"
+            mytitle6="Ventana"
+            mytitle7="Región"
+            mytitle8="Cancelar"
+            mytitle9="Captura guardada en"
+            mytitle10="Duración del GIF (segundos)"
+            mytitle11="Tasa de frames del GIF (fps)"
+            mytitle12="Calidad del GIF (1-30, menor=mejor)"
+            description_text="Seleccione opciones para capturar:\n\n- Captura: Imagen PNG\n- GIF: Grabación de pantalla\n\nElija área de captura y ajustes"
+            btn_capture="Capturar"
+            btn_cancel="Cancelar"
+            ;;
+        fr)
+            mytitle="Capture d'écran"
+            mytitle2="Délai (secondes)"
+            mytitle3="Type de capture"
+            mytitle4="Mode de capture"
+            mytitle5="Plein écran"
+            mytitle6="Fenêtre"
+            mytitle7="Région"
+            mytitle8="Annuler"
+            mytitle9="Capture enregistrée dans"
+            mytitle10="Durée du GIF (secondes)"
+            mytitle11="Taux d'images du GIF (ips)"
+            mytitle12="Qualité du GIF (1-30, plus bas=meilleur)"
+            description_text="Sélectionnez les options de capture:\n\n- Capture: Image PNG\n- GIF: Enregistrement d'écran\n\nChoisissez la zone et les paramètres"
+            btn_capture="Capturer"
+            btn_cancel="Annuler"
+            ;;
+        de)
+            mytitle="Bildschirmfoto"
+            mytitle2="Verzögerung (Sekunden)"
+            mytitle3="Aufnahmetyp"
+            mytitle4="Aufnahmemodus"
+            mytitle5="Vollbild"
+            mytitle6="Fenster"
+            mytitle7="Bereich"
+            mytitle8="Abbrechen"
+            mytitle9="Aufnahme gespeichert in"
+            mytitle10="GIF-Dauer (Sekunden)"
+            mytitle11="GIF-Bildrate (fps)"
+            mytitle12="GIF-Qualität (1-30, niedriger=besser)"
+            description_text="Wählen Sie Aufnahmeoptionen:\n\n- Foto: PNG-Bild\n- GIF: Bildschirmaufnahme\n\nWählen Sie Bereich und Einstellungen"
+            btn_capture="Aufnehmen"
+            btn_cancel="Abbrechen"
+            ;;
+        it)
+            mytitle="Screenshot"
+            mytitle2="Ritardo (secondi)"
+            mytitle3="Tipo di cattura"
+            mytitle4="Modalità di cattura"
+            mytitle5="Schermo intero"
+            mytitle6="Finestra"
+            mytitle7="Regione"
+            mytitle8="Annulla"
+            mytitle9="Cattura salvata in"
+            mytitle10="Durata GIF (secondi)"
+            mytitle11="Frame rate GIF (fps)"
+            mytitle12="Qualità GIF (1-30, più basso=migliore)"
+            description_text="Seleziona opzioni di cattura:\n\n- Screenshot: Immagine PNG\n- GIF: Registrazione schermo\n\nScegli area e impostazioni"
+            btn_capture="Cattura"
+            btn_cancel="Annulla"
+            ;;
+        pt)
+            mytitle="Captura de tela"
+            mytitle2="Atraso (segundos)"
+            mytitle3="Tipo de captura"
+            mytitle4="Modo de captura"
+            mytitle5="Tela cheia"
+            mytitle6="Janela"
+            mytitle7="Região"
+            mytitle8="Cancelar"
+            mytitle9="Captura salva em"
+            mytitle10="Duração do GIF (segundos)"
+            mytitle11="Taxa de quadros do GIF (fps)"
+            mytitle12="Qualidade do GIF (1-30, menor=melhor)"
+            description_text="Selecione opções para capturar:\n\n- Captura: Imagem PNG\n- GIF: Gravação de tela\n\nEscolha área e configurações"
+            btn_capture="Capturar"
+            btn_cancel="Cancelar"
+            ;;
+        ru)
+            mytitle="Скриншот"
+            mytitle2="Задержка (секунды)"
+            mytitle3="Тип захвата"
+            mytitle4="Режим захвата"
+            mytitle5="Весь экран"
+            mytitle6="Окно"
+            mytitle7="Область"
+            mytitle8="Отмена"
+            mytitle9="Снимок сохранён в"
+            mytitle10="Длительность GIF (секунды)"
+            mytitle11="Частота кадров GIF (fps)"
+            mytitle12="Качество GIF (1-30, меньше=лучше)"
+            description_text="Выберите параметры захвата:\n\n- Скриншот: PNG изображение\n- GIF: Запись экрана\n\nВыберите область и настройки"
+            btn_capture="Захватить"
+            btn_cancel="Отмена"
+            ;;
+        ja)
+            mytitle="スクリーンショット"
+            mytitle2="遅延（秒）"
+            mytitle3="キャプチャタイプ"
+            mytitle4="キャプチャモード"
+            mytitle5="全画面"
+            mytitle6="ウィンドウ"
+            mytitle7="領域"
+            mytitle8="キャンセル"
+            mytitle9="キャプチャ保存先"
+            mytitle10="GIFの長さ（秒）"
+            mytitle11="GIFのフレームレート（fps）"
+            mytitle12="GIFの品質（1-30、低いほど良い）"
+            description_text="キャプチャオプションを選択:\n\n- スクショ: PNG画像\n- GIF: 画面録画\n\n領域と設定を選択"
+            btn_capture="キャプチャ"
+            btn_cancel="キャンセル"
+            ;;
+        zh_cn)
+            mytitle="屏幕截图"
+            mytitle2="延迟（秒）"
+            mytitle3="捕获类型"
+            mytitle4="捕获模式"
+            mytitle5="全屏"
+            mytitle6="窗口"
+            mytitle7="区域"
+            mytitle8="取消"
+            mytitle9="捕获已保存到"
+            mytitle10="GIF时长（秒）"
+            mytitle11="GIF帧率（fps）"
+            mytitle12="GIF质量（1-30，越低越好）"
+            description_text="选择捕获选项:\n\n- 截图: PNG图片\n- GIF: 屏幕录制\n\n选择区域和设置"
+            btn_capture="捕获"
+            btn_cancel="取消"
+            ;;
+        *)
+            # Default English
+            mytitle="Screenshot"
+            mytitle2="Delay (seconds)"
+            mytitle3="Type of capture"
+            mytitle4="Capture mode"
+            mytitle5="Full screen"
+            mytitle6="Window"
+            mytitle7="Region"
+            mytitle8="Cancel"
+            mytitle9="Capture saved in"
+            mytitle10="GIF duration (seconds)"
+            mytitle11="GIF frame rate (fps)"
+            mytitle12="GIF quality (1-30, lower=better)"
+            description_text="Select options to capture:\n\n- Screenshot: PNG image\n- GIF: Screen recording\n\nChoose capture area and settings"
+            btn_capture="Capture"
+            btn_cancel="Cancel"
+            ;;
+    esac
+}
+
+# Configurar idioma
+set_language_strings "$LANG_CODE"
+
+output_dir="$HOME"
+sound_file="/usr/local/YADCapture/camera-shutter.wav"
+ICON_PATH="/usr/local/YADCapture/camera.svg"
+
+show_dialog() {
+    yad --form --title "$mytitle- Version 0.2.1" --width 400 --height 350 \
+        --window-icon="$ICON_PATH" \
+        --image="$ICON_PATH" --image-on-top \
+        --text="$description_text" \
+        --center \
+        --field "$mytitle2":NUM "1!0..30!1" \
+        --field "$mytitle3:CB" "Image!GIF" \
+        --field "$mytitle4:CB" "$mytitle5!$mytitle6!$mytitle7" \
+        --field "Filename" "screenshot" \
+        --field "$mytitle10":NUM "5!1..60!1" \
+        --field "$mytitle11":NUM "10!1..60!1" \
+        --field "$mytitle12":NUM "15!1..30!1" \
+        --button="📸 Capturar:0" --button="❌ Cancelar:1" --button="🎬 Screen Recorder:2"
+
+}
+
+# Función para capturar GIF con FFmpeg
+capture_gif() {
+    local delay="$1"
+    local duration="$2"
+    local fps="$3"
+    local quality="$4"
+    local filename="$5"
+    local mode="$6"
+    
+    local temp_file=$(mktemp --suffix=.mp4)
+    
+    local screen_res=$(xrandr | grep '*' | awk '{print $1}')
+    
+    case "$mode" in
+        "$mytitle5")
+            ffmpeg -y -f x11grab -video_size "$screen_res" -framerate "$fps" \
+                  -i "${DISPLAY:-:0.0}" -t "$duration" "$temp_file" >/dev/null 2>&1
+            ;;
+        "$mytitle6")
+
+            sleep "$delay"
+            local window_id=$(xwininfo | grep 'Window id:' | awk '{print $4}')
+            ffmpeg -y -f x11grab -video_size "$screen_res" -framerate "$fps" \
+                  -i "${DISPLAY:-:0.0}+$(xwininfo -id $window_id | grep 'Absolute upper-left X' | awk '{print $4}'),$(xwininfo -id $window_id | grep 'Absolute upper-left Y' | awk '{print $4}')" \
+                  -t "$duration" "$temp_file" >/dev/null 2>&1
+            ;;
+        "$mytitle7")
+
+            sleep "$delay"
+            local slop_output=$(slop -f "%x %y %w %h")
+            [ -z "$slop_output" ] && return 1
+            read -r x y w h <<< "$slop_output"
+            ffmpeg -y -f x11grab -video_size "${w}x${h}" -framerate "$fps" \
+                  -i "${DISPLAY:-:0.0}+${x},${y}" -t "$duration" "$temp_file" >/dev/null 2>&1
+            ;;
+    esac
+    
+    ffmpeg -y -i "$temp_file" -vf "fps=$fps,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3" \
+           -loop 0 -compression_level "$quality" "$filename" >/dev/null 2>&1
+
+    rm -f "$temp_file"
+}
+
+while true; do
+    dialog_output=$(show_dialog)
+    response=$?
+
+    case "$response" in
+        0)
+            ;;
+        1)
+            exit 0
+            ;;
+        2)
+            /usr/local/YADCapture/Screen_Recorder.sh &
+            exit 0
+            ;;
+        *)
+            exit 1
+            ;;
+    esac
+
+
+    demora=$(echo "$dialog_output" | awk -F '|' '{print $1}')
+    tipo_captura=$(echo "$dialog_output" | awk -F '|' '{print $2}')
+    modo_captura=$(echo "$dialog_output" | awk -F '|' '{print $3}')
+    filename_input=$(echo "$dialog_output" | awk -F '|' '{print $4}')
+    gif_duration=$(echo "$dialog_output" | awk -F '|' '{print $5}')
+    gif_fps=$(echo "$dialog_output" | awk -F '|' '{print $6}')
+    gif_quality=$(echo "$dialog_output" | awk -F '|' '{print $7}')
+
+    if [ -z "$filename_input" ]; then
+        filename_input="screenshot"
+    fi
+
+    timestamp=$(date +%Y%m%d_%H%M%S)
+
+    if [ "$tipo_captura" = "Image" ]; then
+        extension="png"
+        filename="${output_dir}/${filename_input}_${timestamp}.${extension}"
+
+        case "$modo_captura" in
+            "$mytitle5")
+                scrot -d "$demora" "$filename"
+                ;;
+            "$mytitle6")
+                scrot -d "$demora" -u "$filename"
+                ;;
+            "$mytitle7")
+                scrot -d "$demora" -s "$filename"
+                ;;
+        esac
+    else
+        extension="gif"
+        filename="${output_dir}/${filename_input}_${timestamp}.${extension}"
+        capture_gif "$demora" "$gif_duration" "$gif_fps" "$gif_quality" "$filename" "$modo_captura"
+    fi
+
+    aplay "$sound_file" 2>/dev/null
+
+    (
+        yad --info --center --title "$mytitle" --text "$mytitle9 $filename" --timeout 3 --undecorated
+    ) &
+    YAD_PID=$!
+
+    sleep 3
+    kill "$YAD_PID" 2>/dev/null
+done
