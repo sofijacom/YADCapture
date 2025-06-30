@@ -8,25 +8,40 @@
 
 ## ✨ Features
 
-- 🖥️ **All-in-One Capture**:
-  - 📸 Screenshots (PNG) - Fullscreen/window/region
-  - 🎞️ GIF recordings - Custom duration & framerate
-  - 🎥 Screen recordings (MP4) - With audio support
+- 🖥️ All-in-One Capture:
 
-- 🌍 **Multi-language UI** (ES, EN, FR, DE, IT, PT, RU, JA, ZH, and more)
+    📸 Screenshots (PNG) - Fullscreen/window/region
 
-- ⚙️ **Customizable**:
+    🎞️ GIF recordings - Custom duration & framerate
+
+    🎥 Screen recordings (MP4) - With audio support
+
+    Real-time preview with auto-detected players (mpv/mplayer/ffplay)
+
+    Global keyboard shortcuts (Ctrl+F to pause, Ctrl+S to stop)
+
+    System tray integration with status icons
+
+🌍 Multi-language UI (ES, EN, FR, DE, IT, PT, RU, JA, ZH, and more)
+
+- ⚙️ Customizable:
+
   - Countdown timer
+
   - GIF quality settings
+
   - Video resolution options
+
   - Output filename templates
+
+  - xbindkeys configuration for custom shortcuts
 
 ## 🚀 Quick Start
 
 ### Dependencies
 ```bash
 Debian
-sudo apt install yad ffmpeg scrot
+sudo apt install yad ffmpeg scrot xbindkeys mpv
 
 Arch
-sudo pacman -S yad ffmpeg scrot
+sudo pacman -S yad ffmpeg scrot xbindkeys mpv

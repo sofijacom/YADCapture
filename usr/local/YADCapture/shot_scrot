@@ -4,7 +4,7 @@
 # autor: josejp2424
 # Descripción: Captura de pantalla o GIF con opciones configurables usando FFmpeg
 # Soporta múltiples idiomas detectando la configuración del sistema
-#version 0.2.1
+#version 0.2.2
 # licencia MIT
 # =============================================================================
 
