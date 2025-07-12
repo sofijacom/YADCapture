@@ -44,8 +44,6 @@
 
 ### Dependencies
 ```bash
-# Debian
-sudo apt install yad ffmpeg scrot noto-fonts-emoji xbindkeys mpv
 
 # Arch
 sudo pacman -S yad ffmpeg scrot noto-fonts-emoji xbindkeys mpv
